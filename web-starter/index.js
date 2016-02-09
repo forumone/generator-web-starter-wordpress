@@ -46,7 +46,7 @@ module.exports = generators.Base.extend({
       }
     },
     setThemePath : function() {
-      this.options.parent.answers.theme_gemfile = 'wp-content/themes/' + this.options.parent.answers['web-starter-wordpress'].wordpress_theme + '/Gemfile';
+      this.options.parent.answers.theme_gemfile = 'public/wp-content/themes/' + this.options.parent.answers['web-starter-wordpress'].wordpress_theme + '/Gemfile';
     }
   },
   writing : {
