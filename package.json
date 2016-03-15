@@ -22,9 +22,6 @@
     "yeoman-generator": "~0.20",
     "yosay": "^1.0.0"
   },
-  "peerDependencies": {
-    "yo": ">=1.0.0-rc.1"
-  },
   "engines": {
     "node": ">=0.8.0",
     "npm": ">=1.2.10"
