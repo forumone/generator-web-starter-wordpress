@@ -17,7 +17,9 @@
     "url": "git://github.com/forumone/generator-web-starter-wordpress.git"
   },
   "dependencies": {
-    "lodash": "^3.10.0",
+    "bluebird": "^3.3.4",
+    "lodash": "^4.6",
+    "request-promise": "^2.0.1",
     "update-notifier": "^0.2.2",
     "yeoman-generator": "~0.20",
     "yosay": "^1.0.0"
@@ -35,7 +37,7 @@
     "web-starter"
   ],
   "webStarter": {
-  	"category": "Platform",
-  	"name": "WordPress"
+    "category": "Platform",
+    "name": "WordPress"
   }
 }
