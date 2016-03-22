@@ -18,8 +18,10 @@
   },
   "dependencies": {
     "bluebird": "^3.3.4",
+    "glob": "^7.0.3",
     "lodash": "^4.6",
     "request-promise": "^2.0.1",
+    "semver": "^5.1.0",
     "update-notifier": "^0.2.2",
     "yeoman-generator": "~0.20",
     "yosay": "^1.0.0"
