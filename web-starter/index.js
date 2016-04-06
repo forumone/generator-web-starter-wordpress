@@ -74,6 +74,12 @@ module.exports = generators.Base.extend({
           name: 'wordpress_theme',
           message: 'Theme name',
           default: config.wordpress_theme,
+        },
+        {
+          type: 'confirm',
+          name: 'install_wordpress',
+          message: 'Install a fresh copy of WordPress?',
+          default: false,
         }], function (answers) {
           resolve(answers);
         })
@@ -115,35 +121,40 @@ module.exports = generators.Base.extend({
       var done = this.async();
       var config = this.config.getAll();
 
-      // Create a Promise for remote downloading
-      var remote = new Promise(function(resolve, reject) {
-        that.remote('WordPress', 'WordPress', config.wp_version, function(err, remote) {
-          if (err) {
-            reject(err);
-          }
-          else {
-            resolve(remote);
-          }
+      if (config.install_wordpress) {
+        // Create a Promise for remote downloading
+        var remote = new Promise(function(resolve, reject) {
+          that.remote('WordPress', 'WordPress', config.wp_version, function(err, remote) {
+            if (err) {
+              reject(err);
+            }
+            else {
+              resolve(remote);
+            }
+          });
         });
-      });
-      
-      // Begin Promise chain
-      remote.bind(this).then(function(remote) {
-        this.remote = remote;
-        return glob('**', { cwd : remote.cachePath });
-      }).then(function(files) {
-        var remote = this.remote;
         
-        _.each(files, function(file) {
-          that.fs.copy(
-            remote.cachePath + '/' + file,
-            that.destinationPath('public/' + file)
-          );
+        // Begin Promise chain
+        remote.bind(this).then(function(remote) {
+          this.remote = remote;
+          return glob('**', { cwd : remote.cachePath });
+        }).then(function(files) {
+          var remote = this.remote;
+          
+          _.each(files, function(file) {
+            that.fs.copy(
+              remote.cachePath + '/' + file,
+              that.destinationPath('public/' + file)
+            );
+          });
+        }).finally(function() {
+          // Declare we're done
+          done();
         });
-      }).finally(function() {
-        // Declare we're done
+      }
+      else {
         done();
-      });
+      }  
     },
     
     settings : function() {
