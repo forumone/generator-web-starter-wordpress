@@ -110,10 +110,6 @@ module.exports = generators.Base.extend({
     },
     setThemePath : function() {
       this.options.parent.answers.theme_path = 'public/wp-content/themes/' + this.options.parent.answers['web-starter-wordpress'].wordpress_theme;
-    },
-    setGruntTask : function() {
-      this.options.getPlugin("grunt").addGruntTasks("postcss", this);
-      this.options.getPlugin("grunt").addGruntDevDependency({'grunt-postcss':'^0.8.0'});
     }
   },
   writing : {
