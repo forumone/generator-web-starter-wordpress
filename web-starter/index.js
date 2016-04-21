@@ -6,8 +6,17 @@ var generators = require('yeoman-generator'),
   semver = require('semver'),
   glob = Promise.promisify(require('glob'));
 
-module.exports = generators.Base.extend({
+function doFoo() {
   
+}
+
+module.exports = generators.Base.extend({
+  initializing : {
+    platform : function() {
+      // Set the platform
+      this.options.parent.answers.platform = 'wordpress';
+    }
+  },
   prompting : function() {
     var done = this.async();
     var that = this;
@@ -89,9 +98,6 @@ module.exports = generators.Base.extend({
 
       // Expose the answers on the parent generator
       _.extend(that.options.parent.answers, { 'web-starter-wordpress' : answers });
-      
-      // Set the platform
-      that.options.parent.answers.platform = 'wordpress';
     }).finally(function() {
       done();
     });
