@@ -4,14 +4,14 @@ var generators = require('yeoman-generator'),
   Promise = require('bluebird'),
   rp = require('request-promise'),
   semver = require('semver'),
-  glob = Promise.promisify(require('glob'));
-
-function doFoo() {
-  
-}
+  glob = Promise.promisify(require('glob')),
+  ygp = require('yeoman-generator-bluebird');
 
 module.exports = generators.Base.extend({
   initializing : {
+    async : function() {
+      ygp(this);
+    },
     platform : function() {
       // Set the platform
       this.options.parent.answers.platform = 'wordpress';
@@ -64,35 +64,33 @@ module.exports = generators.Base.extend({
         config.wp_version = tags[0];
       }
       
-      return new Promise(function(resolve, reject) {
-        that.prompt([{
-          type : 'list',
-          name : 'wp_version',
-          choices : tags,
-          message : 'Select a version of WordPress',
-          default : config.wp_version,
-        },
-        {
-          type: 'confirm',
-          name: 'wp_cfm',
-          message: 'Does it use the WP-CFM plugin?',
-          default: config.wp_cfm,
-        },
-        {
-          type: 'input',
-          name: 'wordpress_theme',
-          message: 'Theme name (machine name)',
-          default: config.wordpress_theme,
-        },
-        {
-          type: 'confirm',
-          name: 'install_wordpress',
-          message: 'Install a fresh copy of WordPress?',
-          default: false,
-        }], function (answers) {
-          resolve(answers);
-        })
-      });
+      return Promise.resolve(tags);
+    }).then(function(tags) {
+      return that.promptAsync([{
+        type : 'list',
+        name : 'wp_version',
+        choices : tags,
+        message : 'Select a version of WordPress',
+        default : config.wp_version,
+      },
+      {
+        type: 'confirm',
+        name: 'wp_cfm',
+        message: 'Does it use the WP-CFM plugin?',
+        default: config.wp_cfm,
+      },
+      {
+        type: 'input',
+        name: 'wordpress_theme',
+        message: 'Theme name (machine name)',
+        default: config.wordpress_theme,
+      },
+      {
+        type: 'confirm',
+        name: 'install_wordpress',
+        message: 'Install a fresh copy of WordPress?',
+        default: false,
+      }]);
     }).then(function(answers) {
       that.config.set(answers);
 
@@ -129,32 +127,23 @@ module.exports = generators.Base.extend({
 
       if (config.install_wordpress) {
         // Create a Promise for remote downloading
-        var remote = new Promise(function(resolve, reject) {
-          that.remote('WordPress', 'WordPress', config.wp_version, function(err, remote) {
-            if (err) {
-              reject(err);
-            }
-            else {
-              resolve(remote);
-            }
-          });
-        });
-        
-        // Begin Promise chain
-        remote.bind(this).then(function(remote) {
-          this.remote = remote;
+        this.remoteAsync('WordPress', 'WordPress', config.wp_version)
+        .bind({})
+        .then(function(remote) {
+          this.remotePath = remote.cachePath;
           return glob('**', { cwd : remote.cachePath });
-        }).then(function(files) {
-          var remote = this.remote;
+        })
+        .then(function(files) {
+          var remotePath = this.remotePath;
           
           _.each(files, function(file) {
             that.fs.copy(
-              remote.cachePath + '/' + file,
+              remotePath + '/' + file,
               that.destinationPath('public/' + file)
             );
           });
-        }).finally(function() {
-          // Declare we're done
+        })
+        .finally(function() {
           done();
         });
       }

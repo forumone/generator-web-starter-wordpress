@@ -24,6 +24,7 @@
     "semver": "^5.1.0",
     "update-notifier": "^0.2.2",
     "yeoman-generator": "~0.20",
+    "yeoman-generator-bluebird": "^0.1.0",
     "yosay": "^1.0.0"
   },
   "engines": {
