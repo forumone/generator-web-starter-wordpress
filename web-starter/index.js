@@ -5,12 +5,14 @@ var generators = require('yeoman-generator'),
   rp = require('request-promise'),
   semver = require('semver'),
   glob = Promise.promisify(require('glob')),
+  pkg = require('../package.json'),
   ygp = require('yeoman-generator-bluebird');
 
 module.exports = generators.Base.extend({
   initializing : {
     async : function() {
       ygp(this);
+      this.options.addDevDependency(pkg.name, pkg.version);
     },
     platform : function() {
       // Set the platform
