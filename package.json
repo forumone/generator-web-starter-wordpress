@@ -1,6 +1,6 @@
 {
   "name": "generator-web-starter-wordpress",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "A Wordpress yeoman sub-generator for web-starter",
   "keywords": [
     "yeoman-generator"
