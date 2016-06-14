@@ -12,7 +12,7 @@ module.exports = generators.Base.extend({
   initializing : {
     async : function() {
       ygp(this);
-      this.options.addDevDependency(pkg.name, '^' + pkg.version);
+      this.options.addDevDependency(pkg.name, '~' + pkg.version);
     },
     platform : function() {
       // Set the platform
