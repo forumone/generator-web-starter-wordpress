@@ -116,6 +116,7 @@ module.exports = generators.Base.extend({
     },
     setThemePath : function() {
       this.options.parent.answers.theme_path = 'public/wp-content/themes/' + this.options.parent.answers['web-starter-wordpress'].wordpress_theme;
+      this.options.parent.answers.build_path = 'public/wp-content/themes/' + this.options.parent.answers['web-starter-wordpress'].wordpress_theme;
     }
   },
   writing : {
