@@ -20,7 +20,6 @@ module.exports = generators.Base.extend({
     }
   },
   prompting : function() {
-    var done = this.async();
     var that = this;
     
     var config = _.extend({
@@ -29,7 +28,7 @@ module.exports = generators.Base.extend({
       wp_version : ''
     }, this.config.getAll());
     
-    rp({ 
+    return rp({ 
       url : 'https://api.github.com/repos/WordPress/WordPress/tags',
       headers : {
         'User-Agent' : 'generator-web-starter-wordpress',
@@ -68,7 +67,7 @@ module.exports = generators.Base.extend({
       
       return Promise.resolve(tags);
     }).then(function(tags) {
-      return that.promptAsync([{
+      return that.prompt([{
         type : 'list',
         name : 'wp_version',
         choices : tags,
@@ -98,8 +97,6 @@ module.exports = generators.Base.extend({
 
       // Expose the answers on the parent generator
       _.extend(that.options.parent.answers, { 'web-starter-wordpress' : answers });
-    }).finally(function() {
-      done();
     });
   },
   configuring : {
@@ -125,12 +122,11 @@ module.exports = generators.Base.extend({
      */
     wordpress : function() {
       var that = this;
-      var done = this.async();
       var config = this.config.getAll();
 
       if (config.install_wordpress) {
         // Create a Promise for remote downloading
-        this.remoteAsync('WordPress', 'WordPress', config.wp_version)
+        return this.remoteAsync('WordPress', 'WordPress', config.wp_version)
         .bind({})
         .then(function(remote) {
           this.remotePath = remote.cachePath;
@@ -145,19 +141,11 @@ module.exports = generators.Base.extend({
               that.destinationPath('public/' + file)
             );
           });
-        })
-        .finally(function() {
-          done();
         });
       }
-      else {
-        done();
-      }  
     },
     
     settings : function() {
-      var done = this.async();
-      
       // Get current system config for this sub-generator
       var config = this.options.parent.answers['web-starter-wordpress'];
       _.extend(config, this.options.parent.answers);
@@ -167,8 +155,6 @@ module.exports = generators.Base.extend({
         this.destinationPath('public/wp-config.vm.php'),
         config
       );
-      
-      done();
     }
   }
 });
