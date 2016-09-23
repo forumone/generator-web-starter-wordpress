@@ -107,7 +107,7 @@ module.exports = generators.Base.extend({
       if (_.has(this.options.parent.answers, 'web-starter-capistrano')) {
         _.extend(this.options.parent.answers['web-starter-capistrano'].config, {
           wordpress_wpcfm : config.wp_cfm,
-          linked_dirs : '%w[public/wp-content/uploads public/wp-content/upgrade]'
+          linked_dirs : '%w[public/wp-content/uploads public/wp-content/upgrade public/wp-content/wflogs]'
         });
       }
     },
