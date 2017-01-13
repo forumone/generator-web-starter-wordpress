@@ -23,6 +23,7 @@ module.exports = generators.Base.extend({
     var that = this;
     
     var config = _.extend({
+      wp_starter : false,
       wp_cfm : false,
       wordpress_theme : '',
       wp_version : ''
@@ -73,6 +74,12 @@ module.exports = generators.Base.extend({
         choices : tags,
         message : 'Select a version of WordPress',
         default : config.wp_version,
+      },
+      {
+        type: 'confirm',
+        name: 'wp_starter',
+        message: 'Does it use WP Starter (composer)?',
+        default: config.wp_starter,
       },
       {
         type: 'confirm',
