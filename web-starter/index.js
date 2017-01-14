@@ -151,7 +151,23 @@ module.exports = generators.Base.extend({
         });
       }
     },
-    
+
+    /**
+     * Installs WP Starter
+     */
+    wp_starter : function() {
+      var config = this.options.parent.answers['web-starter-wordpress'];
+      _.extend(config, this.options.parent.answers);
+
+      if (config.wp_starter) {
+        this.fs.copyTpl(
+          this.templatePath('composer.json'),
+          this.destinationPath('composer.json'),
+          config
+        );
+      }
+    },
+
     settings : function() {
       // Get current system config for this sub-generator
       var config = this.options.parent.answers['web-starter-wordpress'];
