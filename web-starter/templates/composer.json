@@ -24,6 +24,7 @@
     "post-update-cmd": "WCM\\WPStarter\\Setup::run"
   },
   "extra": {
-    "wordpress-install-dir": "public"
+    "wordpress-install-dir": "public/wp",
+    "wordpress-content-dir": "public/wp-content"
   }
 }
