@@ -23,6 +23,7 @@ module.exports = generators.Base.extend({
     var that = this;
     
     var config = _.extend({
+      wp_starter : false,
       wp_cfm : false,
       wordpress_theme : '',
       wp_version : ''
@@ -73,6 +74,12 @@ module.exports = generators.Base.extend({
         choices : tags,
         message : 'Select a version of WordPress',
         default : config.wp_version,
+      },
+      {
+        type: 'confirm',
+        name: 'wp_starter',
+        message: 'Does it use WP Starter (composer)?',
+        default: config.wp_starter,
       },
       {
         type: 'confirm',
@@ -144,7 +151,23 @@ module.exports = generators.Base.extend({
         });
       }
     },
-    
+
+    /**
+     * Installs WP Starter
+     */
+    wp_starter : function() {
+      var config = this.options.parent.answers['web-starter-wordpress'];
+      _.extend(config, this.options.parent.answers);
+
+      if (config.wp_starter) {
+        this.fs.copyTpl(
+          this.templatePath('composer.json'),
+          this.destinationPath('composer.json'),
+          config
+        );
+      }
+    },
+
     settings : function() {
       // Get current system config for this sub-generator
       var config = this.options.parent.answers['web-starter-wordpress'];
