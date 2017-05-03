@@ -25,7 +25,7 @@ module.exports = generators.Base.extend({
     var config = _.extend({
       wp_starter : false,
       wp_cfm : false,
-      wordpress_theme : '',
+      wordpress_theme : 'gesso',
       wp_version : ''
     }, this.config.getAll());
     
@@ -92,6 +92,9 @@ module.exports = generators.Base.extend({
         name: 'wordpress_theme',
         message: 'Theme name (machine name)',
         default: config.wordpress_theme,
+        validate: function (value) {
+          return value !== '';
+        },
       },
       {
         type: 'confirm',
