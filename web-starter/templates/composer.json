@@ -9,8 +9,7 @@
   ],
   "require": {
     "wecodemore/wpstarter": "^2.3",
-    "wpackagist-plugin/timber-library": "^1.2",
-    "wpackagist-plugin/advanced-custom-fields": "^4.4"
+    "wpackagist-plugin/timber-library": "^1.2"
   },
   "require-dev": {
     "wpackagist-plugin/debug-bar": "*"
@@ -25,6 +24,24 @@
   },
   "extra": {
     "wordpress-install-dir": "public/wp",
-    "wordpress-content-dir": "public/wp-content"
+    "wordpress-content-dir": "public/wp-content",
+    "wpstarter": {
+      "prevent-overwrite": [
+        ".gitignore",
+        "public/wp-config.php",
+        "public/index.php"
+      ]
+    },
+    "installer-paths": {
+      "public/wp-content/plugins/{$name}": [
+        "type:wordpress-plugin"
+      ],
+      "public/wp-content/mu-plugins/{$name}": [
+        "type:wordpress-muplugin"
+      ],
+      "public/wp-content/themes/{$name}": [
+        "type:wordpress-theme"
+      ]
+    }
   }
 }
