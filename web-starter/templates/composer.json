@@ -8,11 +8,7 @@
     }
   ],
   "require": {
-    "wecodemore/wpstarter": "^2.3",
-    "wpackagist-plugin/timber-library": "^1.2"
-  },
-  "require-dev": {
-    "wpackagist-plugin/debug-bar": "*"
+    "wecodemore/wpstarter": "^2.3"
   },
   "config": {
     "vendor-dir": "public/wp-content/vendor",
