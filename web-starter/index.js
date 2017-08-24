@@ -101,6 +101,9 @@ module.exports = generators.Base.extend({
         name: 'install_wordpress',
         message: 'Install a fresh copy of WordPress?',
         default: false,
+        when : function(answers) {
+          return !answers.wp_starter;
+        }
       }]);
     }).then(function(answers) {
       that.config.set(answers);
@@ -111,19 +114,30 @@ module.exports = generators.Base.extend({
   },
   configuring : {
     addCapistrano : function() {
-      var config = this.config.getAll();
       
+      const config = this.config.getAll();
+      const services = this.options.getServices();
+      const doc_root = (this.options.hasService('web')) ? services.web.doc_root : 'public';
+      
+      const linked_dirs = [
+        doc_root + '/wp-content/uploads',
+        doc_root + '/wp-content/upgrade',
+        doc_root + '/wp-content/wflogs',
+      ];
+
       // If we're using Capistrano set some additional values
       if (_.has(this.options.parent.answers, 'web-starter-capistrano')) {
         _.extend(this.options.parent.answers['web-starter-capistrano'].config, {
           wordpress_wpcfm : config.wp_cfm,
-          linked_dirs : '%w[public/wp-content/uploads public/wp-content/upgrade public/wp-content/wflogs]'
+          linked_dirs : '%w[' + linked_dirs.join(' ') + ']'
         });
       }
     },
     setThemePath : function() {
-      this.options.parent.answers.theme_path = 'public/wp-content/themes/' + this.options.parent.answers['web-starter-wordpress'].wordpress_theme;
-      this.options.parent.answers.build_path = 'public/wp-content/themes/' + this.options.parent.answers['web-starter-wordpress'].wordpress_theme;
+      const doc_root = (this.options.hasService('web')) ? this.options.getService('web').doc_root : 'public';
+      
+      this.options.parent.answers.theme_path = doc_root + '/wp-content/themes/' + this.options.parent.answers['web-starter-wordpress'].wordpress_theme;
+      this.options.parent.answers.build_path = doc_root + '/wp-content/themes/' + this.options.parent.answers['web-starter-wordpress'].wordpress_theme;
     }
   },
   writing : {
@@ -143,12 +157,13 @@ module.exports = generators.Base.extend({
           return glob('**', { cwd : remote.cachePath });
         })
         .then(function(files) {
+          const doc_root = (that.options.hasService('web')) ? that.options.getService('web').doc_root : 'public';
           var remotePath = this.remotePath;
           
           _.each(files, function(file) {
             that.fs.copy(
               remotePath + '/' + file,
-              that.destinationPath('public/' + file)
+              that.destinationPath(doc_root + '/' + file)
             );
           });
         });
@@ -161,6 +176,7 @@ module.exports = generators.Base.extend({
     wp_starter : function() {
       var config = this.options.parent.answers['web-starter-wordpress'];
       _.extend(config, this.options.parent.answers);
+      config.services = this.options.getServices();
 
       if (config.wp_starter) {
         this.fs.copyTpl(
@@ -172,15 +188,26 @@ module.exports = generators.Base.extend({
     },
 
     settings : function() {
+      const doc_root = (this.options.hasService('web')) ? this.options.getService('web').doc_root : 'public';
+      
       // Get current system config for this sub-generator
       var config = this.options.parent.answers['web-starter-wordpress'];
       _.extend(config, this.options.parent.answers);
-      
-      this.fs.copyTpl(
-        this.templatePath('public/wp-config.vm.php'),
-        this.destinationPath('public/wp-config.vm.php'),
-        config
-      );
+      config.services = this.options.getServices();
+
+      if (config.wp_starter) {
+        this.fs.copyTpl(
+            this.templatePath('_.env.vm'),
+            this.destinationPath('.env.vm'),
+            config
+          );
+      } else {
+        this.fs.copyTpl(
+            this.templatePath(doc_root + '/wp-config.vm.php'),
+            this.destinationPath(doc_root + '/wp-config.vm.php'),
+            config
+          );
+      }
     }
   }
 });
