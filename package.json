@@ -30,6 +30,12 @@
   "peerDependencies": {
     "generator-web-starter-salt": "^0.2.0"
   },
+  "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb-base": "^11.1.3",
+    "eslint-config-forumone-es5": "^2.0.0",
+    "eslint-plugin-import": "^2.2.0"
+  },
   "engines": {
     "node": ">=0.8.0",
     "npm": ">=1.2.10"
