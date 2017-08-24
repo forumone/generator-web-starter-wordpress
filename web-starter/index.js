@@ -186,7 +186,20 @@ module.exports = generators.Base.extend({
         );
       }
     },
-
+    post_provision: function() {
+      const doc_root = (this.options.hasService('web')) ? this.options.getService('web').doc_root : 'public';
+      
+      // Get current system config for this sub-generator
+      var config = this.options.parent.answers['web-starter-wordpress'];
+      _.extend(config, this.options.parent.answers);
+      config.services = this.options.getServices();
+      
+      this.fs.copyTpl(
+        this.templatePath('config/shell/custom/post-provision.unprivileged.sh'),
+        this.destinationPath('config/shell/custom/post-provision.unprivileged.sh'),
+        config
+      );
+    },
     settings : function() {
       const doc_root = (this.options.hasService('web')) ? this.options.getService('web').doc_root : 'public';
       
@@ -197,16 +210,16 @@ module.exports = generators.Base.extend({
 
       if (config.wp_starter) {
         this.fs.copyTpl(
-            this.templatePath('_.env.vm'),
-            this.destinationPath('.env.vm'),
-            config
-          );
+          this.templatePath('_.env.vm'),
+          this.destinationPath('.env.vm'),
+          config
+        );
       } else {
         this.fs.copyTpl(
-            this.templatePath(doc_root + '/wp-config.vm.php'),
-            this.destinationPath(doc_root + '/wp-config.vm.php'),
-            config
-          );
+          this.templatePath(doc_root + '/wp-config.vm.php'),
+          this.destinationPath(doc_root + '/wp-config.vm.php'),
+          config
+        );
       }
     }
   }
