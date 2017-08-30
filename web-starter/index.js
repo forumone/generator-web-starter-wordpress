@@ -102,6 +102,9 @@ module.exports = generators.Base.extend({
         name: 'install_wordpress',
         message: 'Install a fresh copy of WordPress?',
         default: false,
+        when: function (answers) {
+          return !answers.wp_starter;
+        },
       }]);
     }).then(function (answers) {
       that.config.set(answers);
@@ -113,18 +116,28 @@ module.exports = generators.Base.extend({
   configuring: {
     addCapistrano: function () {
       var config = this.config.getAll();
+      var services = this.options.getServices();
+      var docRoot = this.options.hasService('web') ? services.web.doc_root : 'public';
+
+      var linkedDirs = [
+        docRoot + '/wp-content/uploads',
+        docRoot + '/wp-content/upgrade',
+        docRoot + '/wp-content/wflogs',
+      ];
 
       // If we're using Capistrano set some additional values
       if (_.has(this.options.parent.answers, 'web-starter-capistrano')) {
         _.extend(this.options.parent.answers['web-starter-capistrano'].config, {
           wordpress_wpcfm: config.wp_cfm,
-          linked_dirs: '%w[public/wp-content/uploads public/wp-content/upgrade public/wp-content/wflogs]',
+          linked_dirs: '%w[' + linkedDirs.join(' ') + ']',
         });
       }
     },
     setThemePath: function () {
-      this.options.parent.answers.theme_path = 'public/wp-content/themes/' + this.options.parent.answers['web-starter-wordpress'].wordpress_theme;
-      this.options.parent.answers.build_path = 'public/wp-content/themes/' + this.options.parent.answers['web-starter-wordpress'].wordpress_theme;
+      var docRoot = this.options.hasService('web') ? this.options.getService('web').doc_root : 'public';
+
+      this.options.parent.answers.theme_path = docRoot + '/wp-content/themes/' + this.options.parent.answers['web-starter-wordpress'].wordpress_theme;
+      this.options.parent.answers.build_path = docRoot + '/wp-content/themes/' + this.options.parent.answers['web-starter-wordpress'].wordpress_theme;
     },
   },
   writing: {
@@ -147,12 +160,13 @@ module.exports = generators.Base.extend({
           return glob('**', { cwd: remote.cachePath });
         })
         .then(function (files) {
+          var docRoot = that.options.hasService('web') ? that.options.getService('web').doc_root : 'public';
           var remotePath = this.remotePath;
 
           _.each(files, function (file) {
             that.fs.copy(
               remotePath + '/' + file,
-              that.destinationPath('public/' + file)
+              that.destinationPath(docRoot + '/' + file)
             );
           });
         });
@@ -169,6 +183,7 @@ module.exports = generators.Base.extend({
     wp_starter: function () {
       var config = this.options.parent.answers['web-starter-wordpress'];
       _.extend(config, this.options.parent.answers);
+      config.services = this.options.getServices();
 
       if (config.wp_starter) {
         this.fs.copyTpl(
@@ -178,17 +193,39 @@ module.exports = generators.Base.extend({
         );
       }
     },
-
-    settings: function () {
+    post_provision: function () {
       // Get current system config for this sub-generator
       var config = this.options.parent.answers['web-starter-wordpress'];
       _.extend(config, this.options.parent.answers);
+      config.services = this.options.getServices();
 
       this.fs.copyTpl(
-        this.templatePath('public/wp-config.vm.php'),
-        this.destinationPath('public/wp-config.vm.php'),
+        this.templatePath('config/shell/custom/post-provision.unprivileged.sh'),
+        this.destinationPath('config/shell/custom/post-provision.unprivileged.sh'),
         config
       );
+    },
+    settings: function () {
+      var docRoot = this.options.hasService('web') ? this.options.getService('web').doc_root : 'public';
+
+      // Get current system config for this sub-generator
+      var config = this.options.parent.answers['web-starter-wordpress'];
+      _.extend(config, this.options.parent.answers);
+      config.services = this.options.getServices();
+
+      if (config.wp_starter) {
+        this.fs.copyTpl(
+          this.templatePath('_.env.vm'),
+          this.destinationPath('.env.vm'),
+          config
+        );
+      } else {
+        this.fs.copyTpl(
+          this.templatePath(docRoot + '/wp-config.vm.php'),
+          this.destinationPath(docRoot + '/wp-config.vm.php'),
+          config
+        );
+      }
     },
   },
 });
