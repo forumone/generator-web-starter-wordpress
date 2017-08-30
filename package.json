@@ -27,6 +27,9 @@
     "yeoman-generator-bluebird": "^0.1.0",
     "yosay": "^1.0.0"
   },
+  "peerDependencies": {
+    "generator-web-starter-salt": "^0.2.0"
+  },
   "devDependencies": {
     "eslint": "^3.19.0",
     "eslint-config-airbnb-base": "^11.1.3",
