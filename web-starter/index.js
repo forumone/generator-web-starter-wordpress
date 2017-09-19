@@ -30,6 +30,9 @@ module.exports = generators.Base.extend({
       wp_version: '',
     }, this.config.getAll());
 
+    // Always default to not installing Wordpress
+    config.install_wordpress = false;
+
     return rp({
       url: 'https://api.github.com/repos/WordPress/WordPress/tags',
       headers: {
@@ -151,7 +154,7 @@ module.exports = generators.Base.extend({
       var config = this.config.getAll();
       var promise;
 
-      if (config.install_wordpress) {
+      if (config.install_wordpress && !config.wp_starter) {
         // Create a Promise for remote downloading
         promise = this.remoteAsync('WordPress', 'WordPress', config.wp_version)
         .bind({})
@@ -213,19 +216,33 @@ module.exports = generators.Base.extend({
       _.extend(config, this.options.parent.answers);
       config.services = this.options.getServices();
 
-      if (config.wp_starter) {
-        this.fs.copyTpl(
-          this.templatePath('_.env.vm'),
-          this.destinationPath('.env.vm'),
-          config
-        );
-      } else {
-        this.fs.copyTpl(
-          this.templatePath(docRoot + '/wp-config.vm.php'),
-          this.destinationPath(docRoot + '/wp-config.vm.php'),
-          config
-        );
-      }
+      var that = this;
+
+      // Get unique hashes from Wordpress
+      return rp('https://api.wordpress.org/secret-key/1.1/salt/')
+      .then(function (hashes) {
+        config.hashes = hashes;
+
+        if (config.wp_starter) {
+          that.fs.copyTpl(
+            that.templatePath('_.env.vm'),
+            that.destinationPath('.env.vm'),
+            config
+          );
+
+          that.fs.copyTpl(
+            that.templatePath(docRoot + '/wp-config.wpstarter.php'),
+            that.destinationPath(docRoot + '/wp-config.vm.php'),
+            config
+          );
+        } else {
+          that.fs.copyTpl(
+            that.templatePath(docRoot + '/wp-config.vm.php'),
+            that.destinationPath(docRoot + '/wp-config.vm.php'),
+            config
+          );
+        }
+      });
     },
   },
 });
