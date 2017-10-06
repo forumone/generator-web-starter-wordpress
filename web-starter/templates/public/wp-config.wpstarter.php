@@ -13,7 +13,7 @@
 /**
  * Composer autoload.
  */
-require_once realpath(dirname(__DIR__).'/public/wp-content/vendor'.'/autoload.php');
+require_once realpath(dirname(__DIR__).'/<%= services.web.doc_root %>/wp-content/vendor'.'/autoload.php');
 
 /**
  * A reference to `.env` folder path.
@@ -128,7 +128,8 @@ if (! defined('WP_HOME')) {
     $secure = in_array((string) $server['HTTPS'], array('on', '1'), true);
     $scheme = $secure ? 'https://' : 'http://';
     $name   = $server['SERVER_NAME'] ? : 'localhost';
-    define('WP_HOME', $scheme.$name);
+    $port   = $server['SERVER_PORT'] ? : '8081';
+    define('WP_HOME', $scheme.$name.':'.$port);
 }
 
 defined('ABSPATH')    or define('ABSPATH',    realpath(dirname(__DIR__).'/public/wp'));

@@ -34,7 +34,8 @@ define('DB_CHARSET', 'utf8');
 define('DB_COLLATE', '');
 
 /** Define the URL */
-define('WP_SITEURL', 'http://localhost:8080');
+//define('WP_SITEURL', 'http://localhost:8081');
+//define('WP_HOME', 'http://localhost:8081');
 
 /**#@+
  * Authentication Unique Keys and Salts.
