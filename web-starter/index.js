@@ -221,7 +221,7 @@ module.exports = generators.Base.extend({
         );
       } else {
         this.fs.copyTpl(
-          this.templatePath(docRoot + '/wp-config.vm.php'),
+          this.templatePath('public/wp-config.vm.php'),
           this.destinationPath(docRoot + '/wp-config.vm.php'),
           config
         );
