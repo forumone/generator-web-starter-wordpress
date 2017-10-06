@@ -231,13 +231,13 @@ module.exports = generators.Base.extend({
           );
 
           that.fs.copyTpl(
-            that.templatePath(docRoot + '/wp-config.wpstarter.php'),
+            that.templatePath('public/wp-config.wpstarter.php'),
             that.destinationPath(docRoot + '/wp-config.vm.php'),
             config
           );
         } else {
           that.fs.copyTpl(
-            that.templatePath(docRoot + '/wp-config.vm.php'),
+            that.templatePath('public/wp-config.vm.php'),
             that.destinationPath(docRoot + '/wp-config.vm.php'),
             config
           );
