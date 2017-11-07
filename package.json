@@ -28,7 +28,7 @@
     "yosay": "^1.0.0"
   },
   "peerDependencies": {
-    "generator-web-starter-salt": "^0.2.0"
+    "generator-web-starter-salt": ">0.2.0"
   },
   "devDependencies": {
     "eslint": "^3.19.0",
