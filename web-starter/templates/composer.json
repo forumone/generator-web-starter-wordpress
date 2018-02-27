@@ -4,11 +4,28 @@
 	"repositories" : [{
 			"type" : "composer",
 			"url" : "https://wpackagist.org"
+		},
+		{
+			"type": "package",
+			"package": {
+				"name": "johnbburg/wp2syslog",
+				"version": "1.0.4",
+				"type": "wordpress-plugin",
+				"dist": {
+					"type": "zip",
+					"url": "https://github.com/johnbburg/wp2syslog/archive/master.zip"
+				},
+				"require": {
+					"composer/installers": "^1.0"
+				}
+			}
 		}
 	],
 	<% if (wp_starter) { %>
 	"require" : {
-		"wecodemore/wpstarter" : "^2.3"
+		"wecodemore/wpstarter" : "^2.3",
+		"wpackagist-plugin/wordfence": "^7.0",
+		"johnbburg/wp2syslog": "^1.0"
 	},
 	<% } %>
 	"config" : {
